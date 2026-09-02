@@ -4,21 +4,32 @@ import { Model } from 'mongoose';
 import { Deal, DealDocument } from './schemas/deal.schema.js';
 import { CreateDealDto } from './dto/create-deal.dto.js';
 import { UpdateDealDto } from './dto/update-deal.dto.js';
+import { ActivityLogService } from '../activity-log/activity-log.service.js';
 
 @Injectable()
 export class DealsService {
   constructor(
     @InjectModel(Deal.name)
     private readonly dealModel: Model<DealDocument>,
+    private readonly activityLogService: ActivityLogService,
   ) {}
 
-  async create(dto: CreateDealDto) {
-    return this.dealModel.create({
+  async create(dto: CreateDealDto, userId: string) {
+    const deal = await this.dealModel.create({
       ...dto,
       expectedCloseDate: dto.expectedCloseDate
         ? new Date(dto.expectedCloseDate)
         : undefined,
     });
+
+    await this.activityLogService.create({
+      user: userId,
+      action: 'CREATE',
+      entity: 'Deal',
+      entityId: deal._id.toString(),
+    });
+
+    return deal;
   }
 
   async findAll(page = 1, limit = 10, search?: string, stage?: string) {
@@ -71,7 +82,7 @@ export class DealsService {
     return deal;
   }
 
-  async update(id: string, dto: UpdateDealDto) {
+  async update(id: string, dto: UpdateDealDto, userId: string) {
     const deal = await this.dealModel.findByIdAndUpdate(
       id,
       {
@@ -83,19 +94,31 @@ export class DealsService {
       { new: true },
     );
 
-    if (!deal) {
-      throw new NotFoundException('Deal not found');
-    }
+    if (!deal) throw new NotFoundException('Deal not found');
+
+    await this.activityLogService.create({
+      user: userId,
+      action: 'UPDATE',
+      entity: 'Deal',
+      entityId: deal._id.toString(),
+    });
 
     return deal;
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
     const deal = await this.dealModel.findByIdAndDelete(id);
 
     if (!deal) {
       throw new NotFoundException('Deal not found');
     }
+
+    await this.activityLogService.create({
+      user: userId,
+      action: 'DELETE',
+      entity: 'Deal',
+      entityId: deal._id.toString(),
+    });
 
     return {
       message: 'Deal deleted successfully',

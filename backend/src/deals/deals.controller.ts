@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { DealsService } from './deals.service.js';
@@ -24,8 +25,8 @@ export class DealsController {
   constructor(private readonly dealsService: DealsService) {}
 
   @Post()
-  create(@Body() dto: CreateDealDto) {
-    return this.dealsService.create(dto);
+  create(@Body() dto: CreateDealDto, @Req() req: any) {
+    return this.dealsService.create(dto, req.user.userId);
   }
 
   @Get()
@@ -44,14 +45,14 @@ export class DealsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateDealDto) {
-    return this.dealsService.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateDealDto, @Req() req: any) {
+    return this.dealsService.update(id, dto, req.user.userId);
   }
 
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)
-  remove(@Param('id') id: string) {
-    return this.dealsService.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.dealsService.remove(id, req.user.userId);
   }
 }

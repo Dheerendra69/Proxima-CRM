@@ -55,7 +55,6 @@ export default function ActivityLogs() {
                   <th>User</th>
                   <th>Action</th>
                   <th>Entity</th>
-                  <th>Entity ID</th>
                   <th>Date</th>
                 </tr>
               </thead>
@@ -74,8 +73,6 @@ export default function ActivityLogs() {
                     </td>
 
                     <td>{log.entity}</td>
-
-                    <td>{log.entityId || "-"}</td>
 
                     <td>
                       {log.createdAt

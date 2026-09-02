@@ -4,6 +4,7 @@ import { Deal, DealSchema } from './schemas/deal.schema.js';
 import { DealsController } from './deals.controller.js';
 import { DealsService } from './deals.service.js';
 import { AuthModule } from '../auth/auth.module.js';
+import { ActivityLogModule } from '../activity-log/activity-log.module.js';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from '../auth/auth.module.js';
       },
     ]),
     AuthModule,
+    ActivityLogModule,
   ],
   controllers: [DealsController],
   providers: [DealsService],
