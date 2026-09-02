@@ -4,6 +4,12 @@ A full-stack Customer Relationship Management (CRM) application for managing lea
 
 ![CRM Dashboard](./frontend/public/Hero-Page.png)
 
+### Demo Credentials
+
+Admin - admin@proxima.com
+
+Password - Password@123
+
 ## Features
 
 * JWT-based authentication and authorization
